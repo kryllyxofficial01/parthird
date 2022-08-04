@@ -1,0 +1,2 @@
+# parthird
+Multipurpose Discord bot.
