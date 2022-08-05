@@ -15,8 +15,16 @@ TOKEN = os.getenv("TOKEN")
 async def on_ready():
 	print(f"Logged on as {client.user}")
 
+# Check for errors.
+@client.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.MissingPermissions):
+        await ctx.send("You don't permission to use that command.")
+        return
+
 # Kicks the given user.
 @client.command()
+@commands.has_permissions(kick_members=True)
 async def kick(ctx, user: discord.Member, *, reason):
 	await user.kick(reason=reason)
 	await ctx.send(f"User \"{user}\" has been kicked.\nReason: {reason}")
@@ -24,6 +32,7 @@ async def kick(ctx, user: discord.Member, *, reason):
 
 # Bans the given user.
 @client.command()
+@commands.has_permissions(ban_members=True)
 async def ban(ctx, user: discord.Member, *, reason):
 	await user.ban(reason=reason)
 	await ctx.send(f"User \"{user}\" has been banned.\nReason: {reason}")
@@ -31,6 +40,7 @@ async def ban(ctx, user: discord.Member, *, reason):
 
 # Unbans the given user.
 @client.command()
+@commands.has_permissions(ban_members=True)
 async def unban(ctx, *, user):
 	banned = await ctx.guild.bans()
 	username, tag = user.split("#")
