@@ -7,7 +7,7 @@ from discord.ext import commands
 client = commands.Bot(command_prefix="//")
 
 # Gets the bot's token.
-load_dotenv()
+load_dotenv("src/.env")
 TOKEN = os.getenv("TOKEN")
 
 # Notifier that the bot is online.
