@@ -5,6 +5,7 @@ from discord.ext import commands
 
 # Creates the bot.
 client = commands.Bot(command_prefix="//")
+client.remove_command("help")
 
 # Gets the bot's token.
 load_dotenv("src/.env")
@@ -21,6 +22,16 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingPermissions):
         await ctx.send("You don't permission to use that command.")
         return
+
+@client.command()
+async def help(ctx, command=None):
+    embed = discord.Embed(
+		title="Parthird Help",
+		description="test",
+		colour=discord.Colour.dark_gray()
+	)
+        
+    await ctx.send(embed=embed)
 
 # Kicks the given user.
 @client.command()
