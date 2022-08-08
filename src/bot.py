@@ -19,9 +19,9 @@ async def on_ready():
 # Check for errors.
 @client.event
 async def on_command_error(ctx, error):
-    if isinstance(error, commands.MissingPermissions):
-        await ctx.send("You don't permission to use that command.")
-        return
+	if isinstance(error, commands.MissingPermissions):
+		await ctx.send("You don't permission to use that command.")
+		return
 
 # Help command
 @client.command()
@@ -94,33 +94,84 @@ async def help(ctx, command=None):
 # Kicks the given user.
 @client.command()
 @commands.has_permissions(kick_members=True)
-async def kick(ctx, user: discord.Member, *, reason):
-	await user.kick(reason=reason)
-	await ctx.send(f"User \"{user}\" has been kicked.\nReason: {reason}")
+async def kick(ctx, user: discord.Member, *, reason=""):
+	if reason:
+		await user.kick(reason=reason)
+		await ctx.send(f"User \"{user}\" has been kicked.\nReason: {reason}")
+	else:
+		await user.kick()
+		await ctx.send(f"User \"{user}\" has been kicked.")
+
 	return
+
+# Errors raised by the kick command will be handled here.
+@kick.error
+async def kick_error(ctx, error):
+	if isinstance(error, commands.BadArgument):
+		await ctx.send("The user either does not exist or the username has not been formatted correctly. See `//help kick` for more info.")
+		return
 
 # Bans the given user.
 @client.command()
 @commands.has_permissions(ban_members=True)
-async def ban(ctx, user: discord.Member, *, reason):
-	await user.ban(reason=reason)
-	await ctx.send(f"User \"{user}\" has been banned.\nReason: {reason}")
+async def ban(ctx, user: discord.Member, *, reason=""):
+	if reason:
+		await user.ban(reason=reason)
+		await ctx.send(f"User \"{user}\" has been banned.\nReason: {reason}")
+	else:
+		await user.ban()
+		await ctx.send(f"User \"{user}\" has been banned.")
+
 	return
+
+# Errors raised by the ban command will be handled here.
+@ban.error
+async def ban_error(ctx, error):
+	if isinstance(error, commands.BadArgument):
+		await ctx.send("The user either does not exist or the username has not been formatted correctly. See `//help ban` for more info.")
+		return
 
 # Unbans the given user.
 @client.command()
 @commands.has_permissions(ban_members=True)
 async def unban(ctx, *, user):
 	banned = await ctx.guild.bans()
-	username, tag = user.split("#")
 
-	for ban in banned:
-		usr = ban.user
-		if (usr.name, usr.discriminator) == (username, tag):
-			await ctx.guild.unban(usr)
-			await ctx.send(f"User \"{usr}\" has been unbanned.")
+	if "#" in user:
+		i = 0
+		for ban in banned:
+			usr = ban.user
+
+			ban_name = f"{usr.name}#{usr.discriminator}"
+			banned[i] = ban_name
+
+		i = 0
+		while True:
+			if banned[i] == user:
+				await ctx.guild.unban(usr)
+				await ctx.send(f"User \"{usr}\" has been unbanned.")
+				return
+				
+			else:
+				i += 1
+
+	else:
+		raise commands.BadArgument
 	
 	return
+
+# Errors raised by the unban command will be handled here.
+@unban.error
+async def unban_error(ctx, error):
+	if isinstance(error, commands.BadArgument):
+		await ctx.send("You must provide the username with the tag. See `//help unban` for more info.")
+		return
+
+	elif isinstance(error, commands.CommandInvokeError):
+		await ctx.send("The user either does not exist or has not been banned.")
+		return
+
+	print(error)
 
 # Starts the bot.
 client.run(TOKEN)
