@@ -193,6 +193,7 @@ async def unban_error(ctx, error):
 		await ctx.send("The user either does not exist or has not been banned.")
 		return
 
+# Stats command
 @client.command()
 async def stats(ctx, user: Union[discord.Member, int]):
 	if type(user) == "<class 'int'>":
@@ -200,7 +201,7 @@ async def stats(ctx, user: Union[discord.Member, int]):
 
 	embed = discord.Embed(
 		title = "__**User Stats**__",
-		description = "*All of the technical information of a given player.*\n------------------------------------------------------------",
+		description = "*All of the technical information of a given user.*\n------------------------------------------------------------",
 		colour = discord.Colour.from_rgb(0,150,90)
 	)
 
@@ -250,6 +251,7 @@ async def stats(ctx, user: Union[discord.Member, int]):
 	await ctx.send(embed=embed)
 	return
 
+# Stats error handler
 @stats.error
 async def stats_error(ctx, error):
 	if isinstance(error, commands.MemberNotFound):
