@@ -103,15 +103,24 @@ async def help(ctx, command=None):
 				value = "Gets the technical details of the given user.\n\n__Details:__\n- Username\n- Tag\n- User ID\n- Nickname\n- Status\n- Roles\n- Date Joined\n\nThe `<user>` parameter must be a mention or a user ID.\n\nExample: *//stats* <@960253793063301120>"
 			)
 
+		else:
+			raise commands.BadArgument
+
 	embed.set_footer(text="<> = Required; [] = Optional")
 
 	await ctx.send(embed=embed)
+
+@help.error
+async def help_error(ctx, error):
+	if isinstance(error, commands.BadArgument):
+		await ctx.send("That command either does not exist or has been formatted incorrectly.")
+		return
 
 # Kicks the given user.
 @client.command()
 @commands.has_permissions(kick_members=True)
 async def kick(ctx, user: Union[discord.Member, int], *, reason=""):
-	if type(user) == "<class 'int'>":
+	if isinstance(user, int):
 		user = client.get_user(user)
 	
 	if reason:
@@ -127,14 +136,14 @@ async def kick(ctx, user: Union[discord.Member, int], *, reason=""):
 @kick.error
 async def kick_error(ctx, error):
 	if isinstance(error, commands.BadArgument):
-		await ctx.send("The user either does not exist or the username has not been formatted correctly. See `//help kick` for more info.")
+		await ctx.send("That user either does not exist or the username has not been formatted correctly. See `//help kick` for more info.")
 		return
 
 # Bans the given user.
 @client.command()
 @commands.has_permissions(ban_members=True)
 async def ban(ctx, user: Union[discord.Member, int], *, reason=""):
-	if type(user) == "<class 'int'>":
+	if isinstance(user, int):
 		user = client.get_user(user)
 	
 	if reason:
@@ -150,7 +159,7 @@ async def ban(ctx, user: Union[discord.Member, int], *, reason=""):
 @ban.error
 async def ban_error(ctx, error):
 	if isinstance(error, commands.BadArgument):
-		await ctx.send("The user either does not exist or the username has not been formatted correctly. See `//help ban` for more info.")
+		await ctx.send("That user either does not exist or the username has not been formatted correctly. See `//help ban` for more info.")
 		return
 
 # Unbans the given user.
@@ -190,13 +199,13 @@ async def unban_error(ctx, error):
 		return
 
 	elif isinstance(error, commands.CommandInvokeError):
-		await ctx.send("The user either does not exist or has not been banned.")
+		await ctx.send("That user either does not exist or has not been banned.")
 		return
 
 # Stats command
 @client.command()
 async def stats(ctx, user: Union[discord.Member, int]):
-	if type(user) == "<class 'int'>":
+	if isinstance(user, int):
 		user = client.get_user(user)
 
 	embed = discord.Embed(
@@ -255,7 +264,7 @@ async def stats(ctx, user: Union[discord.Member, int]):
 @stats.error
 async def stats_error(ctx, error):
 	if isinstance(error, commands.MemberNotFound):
-		await ctx.send("The user either does not exist or has not been formatted correctly. See `//help stats` for more info.")
+		await ctx.send("That user either does not exist or has not been formatted correctly. See `//help stats` for more info.")
 		return
 
 # Starts the bot.
