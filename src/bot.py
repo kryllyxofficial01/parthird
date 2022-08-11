@@ -27,14 +27,6 @@ async def on_command_error(ctx, error):
 		await ctx.send("You don't permission to use that command.")
 		return
 
-@client.event
-async def on_member_join(member):
-	pass
-
-@client.event
-async def on_message(message: discord.Message):
-	pass
-
 # Help command
 @client.command()
 async def help(ctx, command=None):
@@ -276,10 +268,6 @@ async def stats_error(ctx, error):
 	if isinstance(error, commands.MemberNotFound):
 		await ctx.send("That user either does not exist or has not been formatted correctly. See `//help stats` for more info.")
 		return
-
-@client.command
-async def register(ctx, category, regis):
-	pass
 
 # Starts the bot.
 client.run(TOKEN)
