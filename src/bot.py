@@ -1,10 +1,10 @@
 import os
 from dotenv import load_dotenv
 from typing import Union
-import json
+import requests
+import utils
 import discord
 from discord.ext import commands
-import scorekeeping as sk
 
 # Creates the bot.
 intents = discord.Intents.all()
@@ -15,9 +15,15 @@ client.remove_command("help")
 load_dotenv("src/.env")
 TOKEN = os.getenv("TOKEN")
 
+# Required info for Geometry Dash API.
+headers = {
+	"Content Type": "application/x-www-form-urlencoded",
+	"User-Agent": ""
+}
+
 # Notifier that the bot is online.
 @client.event
-async def on_ready():
+async def on_connect():
 	print(f"Logged on as {client.user}")
 
 # Check for errors.
@@ -268,6 +274,10 @@ async def stats_error(ctx, error):
 	if isinstance(error, commands.MemberNotFound):
 		await ctx.send("That user either does not exist or has not been formatted correctly. See `//help stats` for more info.")
 		return
+
+@client.command()
+async def gdsearch(ctx, query: str, params: str="most liked"):
+	pass
 
 # Starts the bot.
 client.run(TOKEN)
