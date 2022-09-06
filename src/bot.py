@@ -364,7 +364,7 @@ async def gduser(ctx, user):
 		inline = False
 	)
 
-	embed.set_footer(text=f"Account ID: " + values["16"])
+	embed.set_footer(text="Account ID: " + values["16"])
 
 	await ctx.send(embed=embed)
 	
