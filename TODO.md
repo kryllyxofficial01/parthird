@@ -7,5 +7,5 @@
 
 - [] Figure out how to get the actual level ID of the current daily level (not the index)
 - [] Plan other commands
-	- [] Add more to `utils.getValues()`
+	- Add more to `utils.getValues()`
 - [] *enter productive suggestion here*
