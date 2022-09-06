@@ -1,19 +1,13 @@
-def getValues(type, response):
-	if type == "level list":
-		levels = []
-		level = ""
-		i = 0
-		item_num = 0
-		while True:
-			if response[i] == "|":
-				levels[item_num] = level
-				item += 1
+def getValues(response, type):
+	if type == "user":
+		info = response.split("#")
+		values = info[0].split(":")
 
-			elif response[i] == "#":
-				break
-			
-			else:
-				level += response[i]
-				i += 1
+		user_info = {}
+		headers = values[::2]
+		data = values[1::2]
+		
+		for i in range(len(headers)):
+			user_info[headers[i]] = data[i]
 
-		print(levels)
+		return user_info

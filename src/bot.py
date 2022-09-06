@@ -276,8 +276,70 @@ async def stats_error(ctx, error):
 		return
 
 @client.command()
-async def gdsearch(ctx, query: str, params: str="most liked"):
-	pass
+async def gduser(ctx, user):
+	data = {
+     	"secret": "Wmfd2893gb7",
+    	"str": user
+	}
+	response = requests.post(
+		"http://www.boomlings.com/database/getGJUsers20.php",
+		data=data,
+		headers=headers
+	)
+	
+	values = utils.getValues(response.text, "user")
+ 
+	embed = discord.Embed(
+		title = "__**Geometry Dash Player Stats**__",
+		description = "*All of the stats for a given Geometry Dash player.*\n------------------------------------------------------------",
+		colour = discord.Colour.from_rgb(0,150,90)
+	)
+ 
+	embed.add_field(
+		name = "Username:",
+		value = values["1"],
+		inline = False
+	)
+ 
+	embed.add_field(
+		name = "Stars:",
+		value = values["3"],
+		inline = False
+	)
+ 
+	embed.add_field(
+		name = "Diamonds:",
+		value = "-",
+		inline = False
+	)
+ 
+	embed.add_field(
+		name = "Secret Coins:",
+		value = values["13"],
+		inline = False
+	)
+	
+	embed.add_field(
+		name = "User Coins:",
+		value = values["17"],
+		inline = False
+	)
+ 
+	embed.add_field(
+		name = "Demons:",
+		value = values["4"],
+		inline = False
+	)
+ 
+	embed.add_field(
+		name = "Creator Points:",
+		value = values["8"],
+		inline = False
+	)
+ 
+	embed.set_footer(text="Account ID: " + values["16"])
+	
+	await ctx.send(embed=embed)
 
 # Starts the bot.
 client.run(TOKEN)
