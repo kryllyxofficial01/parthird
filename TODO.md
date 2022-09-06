@@ -1,5 +1,5 @@
  + `//gduser`
-	+ - [ ] Add diamond count
+	+ - [x] Add diamond count
 	+ - [ ] Add icons
 	+ - [ ] Better formatting for embed response
 	+ - [ ] Add support for user ID parameter
