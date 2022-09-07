@@ -74,7 +74,12 @@ async def help(ctx, command=None):
 			value = "Gets the technical details of a user.",
 			inline = False
 		)
-
+  
+		embed.add_field(
+			name = "`//gduser <player>`",
+			value = "Gets the stats of a Geometry Dash player.",
+			inline = False
+		)
 
 	else:
 		embed = discord.Embed(
@@ -110,6 +115,12 @@ async def help(ctx, command=None):
 			embed.add_field(
 				name = "`//stats <user>`",
 				value = "Gets the technical details of the given user.\n\n__Details:__\n- Username\n- Tag\n- User ID\n- Nickname\n- Status\n- Roles\n- Date Joined\n\nThe `<user>` parameter must be a mention or a user ID.\n\nExample: *//stats* <@960253793063301120>"
+			)
+	
+		elif command == "gduser":
+			embed.add_field(
+				name = "`//gduser <player>`",
+				value = "Gets the stats of a Geometry Dash player. `<player>` can be either a username or an account ID.\n\n__Stats:__\n- Username\n- Stars\n- Diamonds\n- Secret Coins\n- User Coins\n- Demons\n- Creator Points\n- Global Rank\n- Mod Status"
 			)
 
 		else:
@@ -276,23 +287,29 @@ async def stats_error(ctx, error):
 		await ctx.send("That user either does not exist or has not been formatted correctly. See `//help stats` for more info.")
 		return
 
+# Gets info about a Geometry Dash player
 @client.command()
 async def gduser(ctx, user):
-	user_data = {
-		"secret": "Wmfd2893gb7",
-		"str": user
-	}
-	user_response = requests.post(
-		"http://www.boomlings.com/database/getGJUsers20.php",
-		data=user_data,
-		headers=headers
-	)
+	try:
+		accountID = int(user)
+		username = False
+	except ValueError:
+		username = True
+		user_data = {
+			"secret": "Wmfd2893gb7",
+			"str": user
+		}
+		user_response = requests.post(
+			"http://www.boomlings.com/database/getGJUsers20.php",
+			data=user_data,
+			headers=headers
+		)
 
-	user_values = utils.getValues(user_response.text, "user")
+		user_values = utils.getValues(user_response.text, "user")
 
 	data = {
 		"secret": "Wmfd2893gb7",
-		"targetAccountID": user_values["16"]
+		"targetAccountID": user_values["16"] if username else accountID
 	}
 	response = requests.post(
 		"http://www.boomlings.com/database/getGJUserInfo20.php",
@@ -367,6 +384,12 @@ async def gduser(ctx, user):
 	embed.set_footer(text="Account ID: " + values["16"])
 
 	await ctx.send(embed=embed)
-	
+
+# Error handler for gduser command
+@gduser.error
+async def gduser_error(ctx, error):
+    if isinstance(error, commands.CommandInvokeError):
+        await ctx.send("That user either does not exist.")
+
 # Starts the bot.
 client.run(TOKEN)
