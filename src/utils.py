@@ -29,5 +29,26 @@ def getValues(response, type):
 
 			values.append(level_values)
 			level_values = {}
+		
+		creator_info = info[1].split("|")
+		song_info = info[2].split("~:~")
 
-		return values
+		creators = []
+		for creator in creator_info:
+			creators.append(creator.split(":")[1])
+		
+		songs = []
+		song_values = {}
+
+		for song in song_info:
+			song = song.split("~|~")
+			headers = song[::2]
+			data = song[1::2]
+
+			for i in range(len(headers)):
+				song_values[headers[i]] = data[i]
+			
+			songs.append(song_values)
+			song_values = {}
+
+		return values, creators, songs

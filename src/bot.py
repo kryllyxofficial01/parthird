@@ -454,7 +454,7 @@ async def gdsearch(ctx, level, filter, difficulty):
 		headers=headers
 	)
 
-	values = utils.getValues(response.text, "levels")
+	values, creators, songs = utils.getValues(response.text, "levels")
 
 # Starts the bot.
 client.run(TOKEN)
