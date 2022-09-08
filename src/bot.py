@@ -384,18 +384,21 @@ async def gduser(ctx, user):
 	embed.set_footer(text="Account ID: " + values["16"])
 
 	await ctx.send(embed=embed)
+	return
 
 # Error handler for gduser command
 @gduser.error
 async def gduser_error(ctx, error):
-    if isinstance(error, commands.CommandInvokeError):
-        await ctx.send("That user either does not exist.")
+	if isinstance(error, commands.CommandInvokeError):
+		await ctx.send("That user either does not exist.")
+		return
 
 # Searches for a level
 @client.command()
 async def gdsearch(ctx, level, filter, difficulty):
 	data = {
 		"secret": "Wmfd2893gb7",
+		"count": 5
 	}
 
 	if filter == "none":
@@ -454,7 +457,29 @@ async def gdsearch(ctx, level, filter, difficulty):
 		headers=headers
 	)
 
-	values, creators, songs = utils.getValues(response.text, "levels")
+	values, creators = utils.getValues(response.text, "levels")
 
+	i = 0
+	for level in values:
+		data["str"] = str(level["1"])
+		
+		response = requests.post(
+			"http://www.boomlings.com/database/getGJLevels21.php",
+			data=data,
+			headers=headers
+		)
+
+		level_info, song = utils.getValues(response.text, "level")
+		
+		embed = discord.Embed(
+			title = "**" + level_info["2"] + "**",
+			description = "*By " + creators[i] + "*",
+			colour = discord.Colour.from_rgb(0,150,90)
+		)
+
+		i += 1
+
+		await ctx.send(level_info, embed=embed)
+	
 # Starts the bot.
 client.run(TOKEN)
