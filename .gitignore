@@ -134,3 +134,6 @@ poetry.lock
 pyproject.toml
 replit.nix
 .replit
+
+# Debugging
+.breakpoints
