@@ -391,5 +391,56 @@ async def gduser_error(ctx, error):
     if isinstance(error, commands.CommandInvokeError):
         await ctx.send("That user either does not exist.")
 
+@client.command()
+async def gdsearch(ctx, filter="none", difficulty="", extra=None):
+	data = {
+		"secret": "Wmfd2893gb7",
+	}
+	
+	if filter == "most_liked" or filter == "none":
+		data["type"] = 0
+	elif filter == "most_downloaded":
+		data["type"] = 1
+	elif filter == "trending":
+		data["type"] = 3
+	elif filter == "recent":
+		data["type"] = 4
+	elif filter == "featured":
+		data["type"] = 6
+	elif filter == "awarded":
+		data["type"] = 11
+
+	if difficulty == "auto":
+		data["diff"] = -3
+	elif difficulty == "easy":
+		data["diff"] = 1
+	elif difficulty == "normal":
+		data["diff"] = 2
+	elif difficulty == "hard":
+		data["diff"] = 3
+	elif difficulty == "harder":
+		data["diff"] = 4
+	elif difficulty == "insane":
+		data["diff"] = 5
+	elif difficulty == "demon":
+		data["diff"] = -2
+	elif difficulty == "easy_demon":
+		data["diff"] = -2
+		data["demonFilter"] = 6
+	elif difficulty == "medium_demon":
+		data["diff"] = -2
+		data["demonFilter"] = 7
+	elif difficulty == "hard_demon":
+		data["diff"] = -2
+		data["demonFilter"] = 8
+	elif difficulty == "insane_demon":
+		data["diff"] = -2
+		data["demonFilter"] = 9
+	elif difficulty == "extreme_demon":
+		data["diff"] = -2
+		data["demonFilter"] = 10
+
+	await ctx.send(data)
+
 # Starts the bot.
 client.run(TOKEN)
