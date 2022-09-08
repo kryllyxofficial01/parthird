@@ -391,14 +391,18 @@ async def gduser_error(ctx, error):
     if isinstance(error, commands.CommandInvokeError):
         await ctx.send("That user either does not exist.")
 
+# Searches for a level
 @client.command()
-async def gdsearch(ctx, filter="none", difficulty="", extra=None):
+async def gdsearch(ctx, level, filter, difficulty):
 	data = {
 		"secret": "Wmfd2893gb7",
 	}
-	
-	if filter == "most_liked" or filter == "none":
+
+	if filter == "none":
 		data["type"] = 0
+		data["str"] = level
+	elif filter == "most_liked":
+		data["type"] = 2
 	elif filter == "most_downloaded":
 		data["type"] = 1
 	elif filter == "trending":
@@ -407,10 +411,14 @@ async def gdsearch(ctx, filter="none", difficulty="", extra=None):
 		data["type"] = 4
 	elif filter == "featured":
 		data["type"] = 6
+	elif filter == "magic":
+		data["type"] = 7
 	elif filter == "awarded":
 		data["type"] = 11
 
-	if difficulty == "auto":
+	if difficulty == "any":
+		pass
+	elif difficulty == "auto":
 		data["diff"] = -3
 	elif difficulty == "easy":
 		data["diff"] = 1
@@ -426,21 +434,27 @@ async def gdsearch(ctx, filter="none", difficulty="", extra=None):
 		data["diff"] = -2
 	elif difficulty == "easy_demon":
 		data["diff"] = -2
-		data["demonFilter"] = 6
+		data["demonFilter"] = 1
 	elif difficulty == "medium_demon":
 		data["diff"] = -2
-		data["demonFilter"] = 7
+		data["demonFilter"] = 2
 	elif difficulty == "hard_demon":
 		data["diff"] = -2
-		data["demonFilter"] = 8
+		data["demonFilter"] = 3
 	elif difficulty == "insane_demon":
 		data["diff"] = -2
-		data["demonFilter"] = 9
+		data["demonFilter"] = 4
 	elif difficulty == "extreme_demon":
 		data["diff"] = -2
-		data["demonFilter"] = 10
+		data["demonFilter"] = 5
 
-	await ctx.send(data)
+	response = requests.post(
+		"http://www.boomlings.com/database/getGJLevels21.php",
+		data=data,
+		headers=headers
+	)
+
+	print(response.text)
 
 # Starts the bot.
 client.run(TOKEN)
