@@ -6,7 +6,7 @@ def getValues(response, type):
 		user_info = {}
 		headers = values[::2]
 		data = values[1::2]
-		
+
 		for i in range(len(headers)):
 			user_info[headers[i]] = data[i]
 
@@ -19,7 +19,7 @@ def getValues(response, type):
 		level_info = {}
 		headers = values[::2]
 		data = values[1::2]
-		
+
 		for i in range(len(headers)):
 			level_info[headers[i]] = data[i]
 
@@ -32,7 +32,7 @@ def getValues(response, type):
 
 		for i in range(len(headers)):
 			song[headers[i]] = data[i]
-		
+
 		return level_info, song
 
 	elif type == "levels":
@@ -52,7 +52,7 @@ def getValues(response, type):
 
 			values.append(level_values)
 			level_values = {}
-		
+
 		creator_info = info[1].split("|")
 		creators = []
 

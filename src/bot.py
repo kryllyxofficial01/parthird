@@ -44,38 +44,37 @@ async def help(ctx, command=None):
 			description = "*List of all the commands Parthird has to offer.*\n---------------------------------------------------------------------------------------------------",
 			colour = discord.Colour.from_rgb(0,150,90)
 		)
-	
+
 		embed.add_field(
 			name = "`//help [command]`",
 			value = "Shows this message. If a command is specified, it gives a more in-depth explanantion.",
 			inline = False
 		)
-		
+
 		embed.add_field(
 			name = "`//kick <user> [reason]`",
 			value = "Kicks the given user.",
 			inline = False
 		)
-	
+
 		embed.add_field(
 			name = "`//ban <user> [reason]`",
 			value = "Bans the given user.",
 			inline = False
 		)
-	
+
 		embed.add_field(
 			name = "`//unban <user>`",
 			value = "Unbans the given user.",
 			inline = False
 		)
 
-		
 		embed.add_field(
 			name = "`//stats <user>`",
 			value = "Gets the technical details of a user.",
 			inline = False
 		)
-  
+
 		embed.add_field(
 			name = "`//gduser <player>`",
 			value = "Gets the stats of a Geometry Dash player.",
@@ -93,7 +92,7 @@ async def help(ctx, command=None):
 				name = "`//help [command]`",
 				value = "Shows a list of all commands. If a command is specified, then a more detailed message about the command will show.\n\nExample: *//help kick*"
 			)
-		
+
 		elif command == "kick":
 			embed.add_field(
 				name = "`//kick <user> [reason]`",
@@ -117,7 +116,7 @@ async def help(ctx, command=None):
 				name = "`//stats <user>`",
 				value = "Gets the technical details of the given user.\n\n__Details:__\n- Username\n- Tag\n- User ID\n- Nickname\n- Status\n- Roles\n- Date Joined\n\nThe `<user>` parameter must be a mention or a user ID.\n\nExample: *//stats* <@960253793063301120>"
 			)
-	
+
 		elif command == "gduser":
 			embed.add_field(
 				name = "`//gduser <player>`",
@@ -143,7 +142,7 @@ async def help_error(ctx, error):
 async def kick(ctx, user: Union[discord.Member, int], *, reason=""):
 	if isinstance(user, int):
 		user = client.get_user(user)
-	
+
 	if reason:
 		await user.kick(reason=reason)
 		await ctx.send(f"User \"{user}\" has been kicked.\nReason: {reason}")
@@ -166,7 +165,7 @@ async def kick_error(ctx, error):
 async def ban(ctx, user: Union[discord.Member, int], *, reason=""):
 	if isinstance(user, int):
 		user = client.get_user(user)
-	
+
 	if reason:
 		await user.ban(reason=reason)
 		await ctx.send(f"User \"{user}\" has been banned.\nReason: {reason}")
@@ -203,13 +202,13 @@ async def unban(ctx, *, user):
 				await ctx.guild.unban(usr)
 				await ctx.send(f"User \"{usr}\" has been unbanned.")
 				return
-				
+
 			else:
 				i += 1
 
 	else:
 		raise commands.BadArgument
-	
+
 	return
 
 # Errors raised by the unban command will be handled here.
@@ -294,6 +293,7 @@ async def gduser(ctx, user):
 	try:
 		accountID = int(user)
 		username = False
+
 	except ValueError:
 		username = True
 		user_data = {
@@ -463,7 +463,7 @@ async def gdsearch(ctx, level, filter, difficulty):
 	i = 0
 	for level in values:
 		data["str"] = str(level["1"])
-		
+
 		response = requests.post(
 			"http://www.boomlings.com/database/getGJLevels21.php",
 			data=data,
@@ -471,7 +471,7 @@ async def gdsearch(ctx, level, filter, difficulty):
 		)
 
 		level_info, song = utils.getValues(response.text, "level")
-		
+
 		embed = discord.Embed(
 			title = "**" + level_info["2"] + "**",
 			description = "*By " + creators[i] + "*",
@@ -481,6 +481,6 @@ async def gdsearch(ctx, level, filter, difficulty):
 		i += 1
 
 		await ctx.send(level_info, embed=embed)
-	
+
 # Starts the bot.
 client.run(TOKEN)
