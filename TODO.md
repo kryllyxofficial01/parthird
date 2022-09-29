@@ -1,3 +1,4 @@
+- [ ] Mod Channel Reports
 - [ ] Roles
 - [ ] Credits Command
 - [ ] Better Level Searching
