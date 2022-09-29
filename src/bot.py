@@ -46,7 +46,7 @@ length = {"0": "Tiny", "1": "Short", "2": "Medium", "3": "Long", "4": "XL"}
 async def on_connect():
 	print(f"Logged on as {client.user}")
 
-# Check for errors.
+# General error handler
 @client.event
 async def on_command_error(ctx, error):
 	if isinstance(error, commands.MissingPermissions):
@@ -100,6 +100,12 @@ async def help(ctx, command=None):
 			inline = False
 		)
 
+		embed.add_field(
+			name = "`//gdsearch <level> [difficulty]`",
+			value = "Searches for a Geometry Dash level. Returns the top 5 results.",
+			inline = False
+		)
+
 	else:
 		embed = discord.Embed(
 			title = "__**Parthird Help**__",
@@ -139,7 +145,13 @@ async def help(ctx, command=None):
 		elif command == "gduser":
 			embed.add_field(
 				name = "`//gduser <player>`",
-				value = "Gets the stats of a Geometry Dash player. `<player>` can be either a username or an account ID.\n\n__Stats:__\n- Username\n- Stars\n- Diamonds\n- Secret Coins\n- User Coins\n- Demons\n- Creator Points\n- Global Rank\n- Mod Status"
+				value = "Gets the stats of a Geometry Dash player. `<player>` can be either a username or an account ID.\n\n__Stats:__\n- Username\n- Stars\n- Diamonds\n- Secret Coins\n- User Coins\n- Demons\n- Creator Points\n- Global Rank\n- Mod Status\n\nExample: *//gduser KryllyxGaming*"
+			)
+
+		elif command == "gdsearch":
+			embed.add_field(
+				name = "`//gdsearch <level> [difficulty]`",
+				value = "Searches for a Geometry Dash level. `<level>` can be either a level name or level ID. If the level has a name with spaces, put the level name in quotation marks. You can also provide a specific difficulty.\n\n__Stats:__\n- Name\n- Author\n- Description\n- Difficulty\n- Stars\n- Downloads\n- Likes\n- Length\n- Rating\n- Coins\n- Song\n\n__Difficulties__:\n- any\n- auto\n- easy\n- normal\n- hard\n- harder\n- insane\n- easy_demon\n- medium_demon\n- hard_demon\n- insane_demon\n- extreme_demon\n\nExample: *//gdsearch Bloodbath*",
 			)
 
 		else:
@@ -149,6 +161,7 @@ async def help(ctx, command=None):
 
 	await ctx.send(embed=embed)
 
+# Error handler for //help
 @help.error
 async def help_error(ctx, error):
 	if isinstance(error, commands.BadArgument):
@@ -171,7 +184,7 @@ async def kick(ctx, user: Union[discord.Member, int], *, reason=""):
 
 	return
 
-# Errors raised by the kick command will be handled here.
+# Error handler for //kick
 @kick.error
 async def kick_error(ctx, error):
 	if isinstance(error, commands.BadArgument):
@@ -194,7 +207,7 @@ async def ban(ctx, user: Union[discord.Member, int], *, reason=""):
 
 	return
 
-# Errors raised by the ban command will be handled here.
+# Error handler for //ban
 @ban.error
 async def ban_error(ctx, error):
 	if isinstance(error, commands.BadArgument):
@@ -230,7 +243,7 @@ async def unban(ctx, *, user):
 	
 	return
 
-# Errors raised by the unban command will be handled here.
+# Error handler for //unban
 @unban.error
 async def unban_error(ctx, error):
 	if isinstance(error, commands.BadArgument):
@@ -241,7 +254,7 @@ async def unban_error(ctx, error):
 		await ctx.send("That user either does not exist or has not been banned.")
 		return
 
-# Stats command
+# Gets the stats for a Discord user
 @client.command()
 async def stats(ctx, user: Union[discord.Member, int]):
 	if isinstance(user, int):
@@ -299,7 +312,7 @@ async def stats(ctx, user: Union[discord.Member, int]):
 	await ctx.send(embed=embed)
 	return
 
-# Stats error handler
+# Error handler for //stats
 @stats.error
 async def stats_error(ctx, error):
 	if isinstance(error, commands.MemberNotFound):
@@ -405,38 +418,22 @@ async def gduser(ctx, user):
 	await ctx.send(embed=embed)
 	return
 
-# Error handler for gduser command
+# Error handler for //gduser
 @gduser.error
 async def gduser_error(ctx, error):
 	if isinstance(error, commands.CommandInvokeError):
-		await ctx.send("That user either does not exist.")
+		await ctx.send("That user does not exist.")
 		return
 
-# Searches for a level
+# Searches for a Geometry Dash level
 @client.command()
-async def gdsearch(ctx, level, filter, difficulty):
+async def gdsearch(ctx, level, difficulty="any"):
 	data = {
 		"secret": "Wmfd2893gb7",
-		"count": 5
+		"count": 5,
+		"type": 0,
+		"str": level
 	}
-
-	if filter == "none":
-		data["type"] = 0
-		data["str"] = level
-	elif filter == "most_liked":
-		data["type"] = 2
-	elif filter == "most_downloaded":
-		data["type"] = 1
-	elif filter == "trending":
-		data["type"] = 3
-	elif filter == "recent":
-		data["type"] = 4
-	elif filter == "featured":
-		data["type"] = 6
-	elif filter == "magic":
-		data["type"] = 7
-	elif filter == "awarded":
-		data["type"] = 11
 
 	if difficulty == "any":
 		pass
@@ -469,6 +466,8 @@ async def gdsearch(ctx, level, filter, difficulty):
 	elif difficulty == "extreme_demon":
 		data["diff"] = -2
 		data["demonFilter"] = 5
+	else:
+		raise commands.BadArgument
 
 	response = requests.post(
 		"http://www.boomlings.com/database/getGJLevels21.php",
@@ -480,7 +479,6 @@ async def gdsearch(ctx, level, filter, difficulty):
 
 	i = 0
 	for level in values:
-		data["type"] = 0
 		data["str"] = str(level["1"])
 		
 		response = requests.post(
@@ -572,6 +570,12 @@ async def gdsearch(ctx, level, filter, difficulty):
 		await ctx.send(embed=embed)
 
 		i += 1
+
+# Error handler for //gdsearch
+@gdsearch.error
+async def gdsearch_error(ctx, error):
+	if isinstance(error, commands.BadArgument):
+		await ctx.send("Invalid level difficulty.")
 	
 # Starts the bot.
 client.run(TOKEN)
