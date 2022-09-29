@@ -1,4 +1,5 @@
 - [ ] Roles
+- [ ] Credits Command
 - [ ] Better Level Searching
 - [ ] YouTube API
 - [ ] Achievement System
