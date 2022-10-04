@@ -1,8 +1,8 @@
 import os
-from dotenv import load_dotenv
 from typing import Union
 import base64
 import requests
+from webserver import runServer
 import utils
 import discord
 from discord.ext import commands
@@ -13,8 +13,7 @@ client = commands.Bot(command_prefix="//", intents=intents)
 client.remove_command("help")
 
 # Gets the bot's token.
-load_dotenv("src/.env")
-TOKEN = os.getenv("TOKEN")
+TOKEN = os.environ.get("TOKEN")
 
 # Required info for Geometry Dash API.
 headers = {
@@ -578,4 +577,5 @@ async def gdsearch_error(ctx, error):
 		await ctx.send("Invalid level difficulty.")
 	
 # Starts the bot.
+runServer()
 client.run(TOKEN)
