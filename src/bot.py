@@ -84,23 +84,23 @@ async def on_raw_reaction_remove(payload):
 		if payload.message_id == 1026867976739233823:
 			if payload.emoji.name == "python":
 				python = guild.get_role(1008789957848072272)
-				await member.remove_roles(python)
+				await client.remove_roles(member, python)
 
 			elif payload.emoji.name == "java":
 				java = guild.get_role(1008790437743570974)
-				await member.remove_roles(java)
+				await client.remove_roles(member, java)
 
 			elif payload.emoji.name == "cplusplus":
 				cpp = guild.get_role(1008794149421584515)
-				await member.remove_roles(cpp)
+				await client.remove_roles(member, cpp)
 
 			elif payload.emoji.name == "src":
 				programming_helper = guild.get_role(1008794453651226756)
-				await member.remove_roles(programming_helper)
+				await client.remove_roles(member, programming_helper)
 
 			elif payload.emoji.name == "💻":
 				tech_helper = guild.get_role(1008789423443427338)
-				await member.remove_roles(tech_helper)
+				await client.remove_roles(member, tech_helper)
 
 	return
 
