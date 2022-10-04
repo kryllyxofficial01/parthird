@@ -6,6 +6,7 @@ from webserver import runServer
 import utils
 import discord
 from discord.ext import commands
+from discord.utils import get
 
 # Creates the bot.
 intents = discord.Intents.all()
@@ -44,6 +45,64 @@ length = {"0": "Tiny", "1": "Short", "2": "Medium", "3": "Long", "4": "XL"}
 @client.event
 async def on_connect():
 	print(f"Logged on as {client.user}")
+
+# Gives users roles when they react to the message in #roles
+@client.event
+async def on_raw_reaction_add(payload):
+	guild = client.get_guild(payload.guild_id)
+	
+	if payload.channel_id == 1026867916337074196:
+		if payload.message_id == 1026867976739233823:
+			if payload.emoji.name == "python":
+				python = guild.get_role(1008789957848072272)
+				await payload.member.add_roles(python)
+
+			elif payload.emoji.name == "java":
+				java = guild.get_role(1008790437743570974)
+				await payload.member.add_roles(java)
+
+			elif payload.emoji.name == "cplusplus":
+				cpp = guild.get_role(1008794149421584515)
+				await payload.member.add_roles(cpp)
+
+			elif payload.emoji.name == "src":
+				programming_helper = guild.get_role(1008794453651226756)
+				await payload.member.add_roles(programming_helper)
+
+			elif payload.emoji.name == "💻":
+				tech_helper = guild.get_role(1008789423443427338)
+				await payload.member.add_roles(tech_helper)
+
+	return
+
+@client.event
+async def on_raw_reaction_remove(payload):
+	guild = client.get_guild(payload.guild_id)
+	member = get(guild.members, id=payload.user_id)
+	
+	if payload.channel_id == 1026867916337074196:
+		if payload.message_id == 1026867976739233823:
+			if payload.emoji.name == "python":
+				python = guild.get_role(1008789957848072272)
+				await member.remove_roles(python)
+
+			elif payload.emoji.name == "java":
+				java = guild.get_role(1008790437743570974)
+				await member.remove_roles(java)
+
+			elif payload.emoji.name == "cplusplus":
+				cpp = guild.get_role(1008794149421584515)
+				await member.remove_roles(cpp)
+
+			elif payload.emoji.name == "src":
+				programming_helper = guild.get_role(1008794453651226756)
+				await member.remove_roles(programming_helper)
+
+			elif payload.emoji.name == "💻":
+				tech_helper = guild.get_role(1008789423443427338)
+				await member.remove_roles(tech_helper)
+
+	return
 
 # General error handler
 @client.event
@@ -577,5 +636,5 @@ async def gdsearch_error(ctx, error):
 		await ctx.send("Invalid level difficulty.")
 	
 # Starts the bot.
-runServer()
+# runServer()
 client.run(TOKEN)
