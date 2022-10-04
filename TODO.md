@@ -1,5 +1,7 @@
 - [ ] Mod Channel Reports
 - [ ] Roles
+  - [ ] Reactions
+  - [ ] Admin Commands
 - [ ] Credits Command
 - [ ] Better Level Searching
 - [ ] YouTube API
