@@ -1,6 +1,7 @@
 - [ ] Mod Channel Reports
+- [ ] Config Command
 - [ ] Roles
-  - [ ] Reactions
+  - [x] Reactions
   - [ ] Admin Commands
 - [ ] Credits Command
 - [ ] Better Level Searching
