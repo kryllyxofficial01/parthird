@@ -5,7 +5,7 @@ import requests
 from webserver import runServer
 import utils
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord.utils import get
 
 # Creates the bot.
@@ -46,6 +46,10 @@ length = {"0": "Tiny", "1": "Short", "2": "Medium", "3": "Long", "4": "XL"}
 async def on_connect():
 	print(f"Logged on as {client.user}")
 	await client.change_presence(activity=discord.Game(name=f"in {len(client.guilds)} servers"))
+
+@tasks.loop(minutes=5, seconds=1)
+async def restart():
+	os.system("kill 1")
 
 # Gives users roles when they react to the message in #roles
 @client.event
