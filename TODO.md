@@ -1,9 +1,8 @@
-- [ ] Mod Channel Reports
+- [x] Mod Channel Reports
 - [ ] Config Command
 - [ ] Roles
   - [x] Reactions
   - [ ] Admin Commands
-- [ ] Credits Command
 - [ ] Better Level Searching
 - [ ] YouTube API
 - [ ] Achievement System

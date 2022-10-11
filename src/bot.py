@@ -45,6 +45,7 @@ length = {"0": "Tiny", "1": "Short", "2": "Medium", "3": "Long", "4": "XL"}
 @client.event
 async def on_connect():
 	print(f"Logged on as {client.user}")
+	await client.change_presence(activity=discord.Game(name=f"in {len(client.guilds)} servers"))
 
 # Gives users roles when they react to the message in #roles
 @client.event
@@ -210,7 +211,7 @@ async def help(ctx, command=None):
 		elif command == "gdsearch":
 			embed.add_field(
 				name = "`//gdsearch <level> [difficulty]`",
-				value = "Searches for a Geometry Dash level. `<level>` can be either a level name or level ID. If the level has a name with spaces, put the level name in quotation marks. You can also provide a specific difficulty.\n\n__Stats:__\n- Name\n- Author\n- Description\n- Difficulty\n- Stars\n- Downloads\n- Likes\n- Length\n- Rating\n- Coins\n- Song\n\n__Difficulties__:\n- any\n- auto\n- easy\n- normal\n- hard\n- harder\n- insane\n- easy_demon\n- medium_demon\n- hard_demon\n- insane_demon\n- extreme_demon\n\nExample: *//gdsearch Bloodbath*",
+				value = "Searches for a Geometry Dash level. `<level>` can be either a level name or level ID. If the level has a name with spaces, put the level name in quotation marks. You can also provide a specific difficulty.\n\n__Stats:__\n- Name\n- Author\n- Description\n- Difficulty\n- Stars\n- Downloads\n- Likes\n- Length\n- Rating\n- Coins\n- Song\n\n__Difficulties (used for `[difficulty]`)__:\n- any\n- auto\n- easy\n- normal\n- hard\n- harder\n- insane\n- easy_demon\n- medium_demon\n- hard_demon\n- insane_demon\n- extreme_demon\n\nExample: *//gdsearch Bloodbath*",
 			)
 
 		else:
@@ -231,6 +232,8 @@ async def help_error(ctx, error):
 @client.command()
 @commands.has_permissions(kick_members=True)
 async def kick(ctx, user: Union[discord.Member, int], *, reason=""):
+	mod_channel = client.get_channel(1005514521609240808)
+	
 	if isinstance(user, int):
 		user = client.get_user(user)
 	
@@ -241,7 +244,36 @@ async def kick(ctx, user: Union[discord.Member, int], *, reason=""):
 		await user.kick()
 		await ctx.send(f"User \"{user}\" has been kicked.")
 
-	return
+	embed = discord.Embed(
+		title = "__**User Kicked**__",
+		colour = discord.Colour.from_rgb(255,0,0)
+	)
+
+	embed.add_field(
+		name = "Who:",
+		value = user,
+		inline = False
+	)
+
+	embed.add_field(
+		name = "Kicked by:",
+		value = ctx.message.author,
+		inline = False
+	)
+
+	embed.add_field(
+		name = "Reason:",
+		value = reason,
+		inline = False
+	)
+
+	embed.add_field(
+		name = "Kicked On:",
+		value = f"<t:{round(ctx.message.created_at.timestamp())}:F>",
+		inline = False
+	)
+
+	await mod_channel.send(embed=embed)
 
 # Error handler for //kick
 @kick.error
@@ -254,6 +286,8 @@ async def kick_error(ctx, error):
 @client.command()
 @commands.has_permissions(ban_members=True)
 async def ban(ctx, user: Union[discord.Member, int], *, reason=""):
+	mod_channel = client.get_channel(1005514521609240808)
+	
 	if isinstance(user, int):
 		user = client.get_user(user)
 	
@@ -263,6 +297,37 @@ async def ban(ctx, user: Union[discord.Member, int], *, reason=""):
 	else:
 		await user.ban()
 		await ctx.send(f"User \"{user}\" has been banned.")
+
+	embed = discord.Embed(
+		title = "__**User Banned**__",
+		colour = discord.Colour.from_rgb(255,0,0)
+	)
+
+	embed.add_field(
+		name = "Who:",
+		value = user,
+		inline = False
+	)
+
+	embed.add_field(
+		name = "Banned by:",
+		value = ctx.message.author,
+		inline = False
+	)
+
+	embed.add_field(
+		name = "Reason:",
+		value = reason,
+		inline = False
+	)
+
+	embed.add_field(
+		name = "Banned On:",
+		value = f"<t:{round(ctx.message.created_at.timestamp())}:F>",
+		inline = False
+	)
+
+	await mod_channel.send(embed=embed)
 
 	return
 
@@ -277,28 +342,49 @@ async def ban_error(ctx, error):
 @client.command()
 @commands.has_permissions(ban_members=True)
 async def unban(ctx, *, user):
-	banned = await ctx.guild.bans()
+	mod_channel = client.get_channel(1005514521609240808)
 
 	if "#" in user:
-		i = 0
-		for ban in banned:
-			usr = ban.user
+		username, tag = user.split("#")
+		found = False
 
-			ban_name = f"{usr.name}#{usr.discriminator}"
-			banned[i] = ban_name
+		async for ban in ctx.guild.bans():
+			if (ban.user.name, ban.user.discriminator) == (username, tag):
+				await ctx.guild.unban(ban.user)
+				await ctx.send(f"Unbanned \"{ban.user.name}#{ban.user.discriminator}\"")
+				found = True
+				break
 
-		i = 0
-		while True:
-			if banned[i] == user:
-				await ctx.guild.unban(usr)
-				await ctx.send(f"User \"{usr}\" has been unbanned.")
-				return
-				
-			else:
-				i += 1
+		if found == False:
+			raise commands.UserNotFound
 
 	else:
 		raise commands.BadArgument
+
+	embed = discord.Embed(
+		title = "__**User Unbanned**__",
+		colour = discord.Colour.from_rgb(0,255,0)
+	)
+
+	embed.add_field(
+		name = "Who:",
+		value = user,
+		inline = False
+	)
+
+	embed.add_field(
+		name = "Unbanned by:",
+		value = ctx.message.author,
+		inline = False
+	)
+
+	embed.add_field(
+		name = "Unbanned On:",
+		value = f"<t:{round(ctx.message.created_at.timestamp())}:F>",
+		inline = False
+	)
+
+	await mod_channel.send(embed=embed)
 	
 	return
 
@@ -309,9 +395,12 @@ async def unban_error(ctx, error):
 		await ctx.send("You must provide the username with the tag. See `//help unban` for more info.")
 		return
 
-	elif isinstance(error, commands.CommandInvokeError):
+	elif isinstance(error, commands.UserNotFound):
 		await ctx.send("That user either does not exist or has not been banned.")
 		return
+
+	else:
+		print(error)
 
 # Gets the stats for a Discord user
 @client.command()
@@ -321,7 +410,7 @@ async def stats(ctx, user: Union[discord.Member, int]):
 
 	embed = discord.Embed(
 		title = "__**User Stats**__",
-		description = "*All of the technical information of a given user.*\n------------------------------------------------------------",
+		description = "*All of the technical information of a given user.*\n---------------------------------------------------------------------------------------------------",
 		colour = discord.Colour.from_rgb(0,150,90)
 	)
 
@@ -365,8 +454,8 @@ async def stats(ctx, user: Union[discord.Member, int]):
 		inline = False
 	)
 
-	time = user.joined_at.strftime("%H:%M:%S %p on %A, %B %d, %Y")
-	embed.set_footer(text=f"Joined: {time}")
+	joined = user.joined_at.strftime("%H:%M:%S %p on %A, %B %d, %Y")
+	embed.set_footer(text=f"Joined: {joined}")
 
 	await ctx.send(embed=embed)
 	return
@@ -412,7 +501,7 @@ async def gduser(ctx, user):
 
 	embed = discord.Embed(
 		title = "__**Geometry Dash Player Stats**__",
-		description = "*All of the stats for a given Geometry Dash player.*\n------------------------------------------------------------",
+		description = "*All of the stats for a given Geometry Dash player.*\n---------------------------------------------------------------------------------------------------",
 		colour = discord.Colour.from_rgb(0,150,90)
 	)
 
@@ -550,7 +639,7 @@ async def gdsearch(ctx, level, difficulty="any"):
 		
 		embed = discord.Embed(
 			title = "**" + level_info["2"] + "**",
-			description = "*By " + creators[i] + "*\n------------------------------------------------------------",
+			description = "*By " + creators[i] + "*\n---------------------------------------------------------------------------------------------------",
 			colour = discord.Colour.from_rgb(0,150,90)
 		)
 
@@ -635,7 +724,7 @@ async def gdsearch(ctx, level, difficulty="any"):
 async def gdsearch_error(ctx, error):
 	if isinstance(error, commands.BadArgument):
 		await ctx.send("Invalid level difficulty.")
-	
+
 # Starts the bot.
 runServer()
 client.run(TOKEN)
