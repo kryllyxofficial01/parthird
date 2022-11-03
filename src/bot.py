@@ -2,7 +2,6 @@ import os
 from typing import Union
 import base64
 import requests
-from webserver import runServer
 import utils
 import discord
 from discord.ext import commands, tasks
@@ -730,5 +729,4 @@ async def gdsearch_error(ctx, error):
 		await ctx.send("Invalid level difficulty.")
 
 # Starts the bot.
-runServer()
 client.run(TOKEN)
