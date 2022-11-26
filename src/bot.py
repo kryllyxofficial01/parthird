@@ -46,10 +46,6 @@ async def on_connect():
 	print(f"Logged on as {client.user}")
 	await client.change_presence(activity=discord.Game(name=f"in {len(client.guilds)} servers"))
 
-@tasks.loop(minutes=5, seconds=1)
-async def restart():
-	os.system("kill 1")
-
 # Gives users roles when they react to the message in #roles
 @client.event
 async def on_raw_reaction_add(payload):
