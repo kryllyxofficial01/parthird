@@ -138,5 +138,5 @@ replit.nix
 # Debugging
 .breakpoints
 
-# SSH Dirs
-parthird
+# Configs (because privacy)
+src/server_configs.json

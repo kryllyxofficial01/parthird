@@ -14,6 +14,10 @@ intents = discord.Intents.all()
 client = commands.Bot(command_prefix="//", intents=intents)
 client.remove_command("help")
 
+# Gets the bot token
+load_dotenv()
+TOKEN = os.environ.get("TOKEN")
+
 # Server config file
 config = Config("server_configs.json")
 
@@ -232,7 +236,7 @@ async def help_error(ctx, error):
 @client.command()
 @commands.has_permissions(kick_members=True)
 async def kick(ctx, user: Union[discord.Member, int], *, reason=""):
-	mod_channel = client.get_channel(1005514521609240808)
+	mod_channel = client.get_channel(config.configs["servers"][str(ctx.guild.id)]["mod_channel"])
 	
 	if isinstance(user, int):
 		user = client.get_user(user)
@@ -712,9 +716,16 @@ async def gdsearch_error(ctx, error):
 		await ctx.send("Invalid level difficulty.")
 
 @client.command()
-async def botconfig(ctx, subcommand):
-	await ctx.send("test")
+async def botconfig(ctx, subcommand, *args):
+	if (subcommand == "modchannel"):
+		mod_channel = client.get_channel(int(args[0][2:-1]))
+		config.write("modchannel", mod_channel.id, ctx.guild.id)
+	
+	config.send()
+
+@botconfig.error
+async def botconfig_error(ctx, error):
+	print(error)
 
 # Starts the bot.
-client.run("OTc2MjU3NjcwNDAxMTA1OTgw.GB9FSC.VtR3Lqwi51zNOnL74aYzWPbsxY5b-sFNoWVMGs")
-
+client.run(TOKEN)
