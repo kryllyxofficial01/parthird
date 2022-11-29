@@ -80,8 +80,6 @@ async def on_raw_reaction_add(payload):
 				tech_helper = guild.get_role(1008789423443427338)
 				await payload.member.add_roles(tech_helper)
 
-	return
-
 # Removes roles once the reaction is removed
 @client.event
 async def on_raw_reaction_remove(payload):
@@ -110,14 +108,11 @@ async def on_raw_reaction_remove(payload):
 				tech_helper = guild.get_role(1008789423443427338)
 				await member.remove_roles(tech_helper)
 
-	return
-
 # General error handler
 @client.event
 async def on_command_error(ctx, error):
 	if isinstance(error, commands.MissingPermissions):
 		await ctx.send("You don't permission to use that command.")
-		return
 
 # Help command
 @client.command()
@@ -232,7 +227,6 @@ async def help(ctx, command=None):
 async def help_error(ctx, error):
 	if isinstance(error, commands.BadArgument):
 		await ctx.send("That command either does not exist or has been formatted incorrectly.")
-		return
 
 # Kicks the given user.
 @client.command()
@@ -286,7 +280,6 @@ async def kick(ctx, user: Union[discord.Member, int], *, reason=""):
 async def kick_error(ctx, error):
 	if isinstance(error, commands.BadArgument):
 		await ctx.send("That user either does not exist or the username has not been formatted correctly. See `//help kick` for more info.")
-		return
 
 # Bans the given user.
 @client.command()
@@ -335,14 +328,11 @@ async def ban(ctx, user: Union[discord.Member, int], *, reason=""):
 
 	await mod_channel.send(embed=embed)
 
-	return
-
 # Error handler for //ban
 @ban.error
 async def ban_error(ctx, error):
 	if isinstance(error, commands.BadArgument):
 		await ctx.send("That user either does not exist or the username has not been formatted correctly. See `//help ban` for more info.")
-		return
 
 # Unbans the given user.
 @client.command()
@@ -391,8 +381,6 @@ async def unban(ctx, *, user):
 	)
 
 	await mod_channel.send(embed=embed)
-	
-	return
 
 # Error handler for //unban
 @unban.error
@@ -403,10 +391,6 @@ async def unban_error(ctx, error):
 
 	elif isinstance(error, commands.UserNotFound):
 		await ctx.send("That user either does not exist or has not been banned.")
-		return
-
-	else:
-		print(error)
 
 # Gets the stats for a Discord user
 @client.command()
@@ -464,14 +448,12 @@ async def stats(ctx, user: Union[discord.Member, int]):
 	embed.set_footer(text=f"Joined: {joined}")
 
 	await ctx.send(embed=embed)
-	return
 
 # Error handler for //stats
 @stats.error
 async def stats_error(ctx, error):
 	if isinstance(error, commands.MemberNotFound):
 		await ctx.send("That user either does not exist or has not been formatted correctly. See `//help stats` for more info.")
-		return
 
 # Gets info about a Geometry Dash player
 @client.command()
@@ -570,14 +552,12 @@ async def gduser(ctx, user):
 	embed.set_footer(text="Account ID: " + values["16"])
 
 	await ctx.send(embed=embed)
-	return
 
 # Error handler for //gduser
 @gduser.error
 async def gduser_error(ctx, error):
 	if isinstance(error, commands.CommandInvokeError):
 		await ctx.send("That user does not exist.")
-		return
 
 # Searches for a Geometry Dash level
 @client.command()
