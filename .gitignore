@@ -137,6 +137,3 @@ replit.nix
 
 # Debugging
 .breakpoints
-
-# SSH Dirs
-parthird
