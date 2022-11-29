@@ -1,8 +1,10 @@
 import os
+from dotenv import load_dotenv
 from typing import Union
 import base64
 import requests
 import utils
+from config import Config
 import discord
 from discord.ext import commands, tasks
 from discord.utils import get
@@ -12,8 +14,8 @@ intents = discord.Intents.all()
 client = commands.Bot(command_prefix="//", intents=intents)
 client.remove_command("help")
 
-# Gets the bot's token.
-TOKEN = os.environ.get("TOKEN")
+# Server config file
+config = Config("server_configs.json")
 
 # Required info for Geometry Dash API.
 headers = {
@@ -46,9 +48,10 @@ async def on_connect():
 	print(f"Logged on as {client.user}")
 	await client.change_presence(activity=discord.Game(name=f"in {len(client.guilds)} servers"))
 
-@tasks.loop(minutes=5, seconds=1)
-async def restart():
-	os.system("kill 1")
+@client.event
+async def on_guild_join(guild):
+	config.write("new server", guild.id)
+	config.send()
 
 # Gives users roles when they react to the message in #roles
 @client.event
@@ -728,5 +731,10 @@ async def gdsearch_error(ctx, error):
 	if isinstance(error, commands.BadArgument):
 		await ctx.send("Invalid level difficulty.")
 
+@client.command()
+async def botconfig(ctx, subcommand):
+	await ctx.send("test")
+
 # Starts the bot.
-client.run(TOKEN)
+client.run("OTc2MjU3NjcwNDAxMTA1OTgw.GB9FSC.VtR3Lqwi51zNOnL74aYzWPbsxY5b-sFNoWVMGs")
+
