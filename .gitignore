@@ -139,4 +139,4 @@ replit.nix
 .breakpoints
 
 # Configs (because privacy)
-src/server_configs.json
+server_configs.json
