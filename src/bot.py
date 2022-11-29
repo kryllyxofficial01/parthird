@@ -716,5 +716,4 @@ async def botconfig(ctx, subcommand):
 	await ctx.send("test")
 
 # Starts the bot.
-client.run("OTc2MjU3NjcwNDAxMTA1OTgw.GB9FSC.VtR3Lqwi51zNOnL74aYzWPbsxY5b-sFNoWVMGs")
-
+client.run("")
