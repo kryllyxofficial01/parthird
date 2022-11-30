@@ -49,7 +49,7 @@ length = {"0": "Tiny", "1": "Short", "2": "Medium", "3": "Long", "4": "XL"}
 # Notifier that the bot is online.
 @client.event
 async def on_connect():
-	print(f"Logged on as {client.user}")
+	print(f"Logged on as {client.user}...")
 	await client.change_presence(activity=discord.Game(name=f"in {len(client.guilds)} servers"))
 
 @client.event
@@ -117,6 +117,9 @@ async def on_raw_reaction_remove(payload):
 async def on_command_error(ctx, error):
 	if isinstance(error, commands.MissingPermissions):
 		await ctx.send("You don't permission to use that command.")
+
+# async def ping(ctx):
+# 	await ctx.send(f"Current Ping: {round(client.latency)} ms")
 
 # Help command
 @client.command()
