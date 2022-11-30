@@ -6,13 +6,13 @@ import requests
 import utils
 from config import Config
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 from discord.utils import get
+from discord import ApplicationContext
 
 # Creates the bot.
 intents = discord.Intents.all()
-client = commands.Bot(command_prefix="//", intents=intents)
-client.remove_command("help")
+client = discord.Bot(command_prefix="//", intents=intents, help_command=None)
 
 # Gets the bot token
 load_dotenv()
@@ -118,11 +118,12 @@ async def on_command_error(ctx, error):
 	if isinstance(error, commands.MissingPermissions):
 		await ctx.send("You don't permission to use that command.")
 
-# async def ping(ctx):
-# 	await ctx.send(f"Current Ping: {round(client.latency)} ms")
+@client.slash_command(name="ping", description="Gets the bot's current message latency.", guild_ids=[976256461887897650])
+async def ping(ctx: ApplicationContext):
+	await ctx.respond(f"Current Ping: {round(client.latency)} ms")
 
 # Help command
-@client.command()
+@commands.command()
 async def help(ctx, command=None):
 	if command == None:
 		embed = discord.Embed(
@@ -236,7 +237,7 @@ async def help_error(ctx, error):
 		await ctx.send("That command either does not exist or has been formatted incorrectly.")
 
 # Kicks the given user.
-@client.command()
+@commands.command()
 @commands.has_permissions(kick_members=True)
 async def kick(ctx, user: Union[discord.Member, int], *, reason=""):
 	mod_channel = client.get_channel(config.configs["servers"][str(ctx.guild.id)]["mod_channel"])
@@ -289,7 +290,7 @@ async def kick_error(ctx, error):
 		await ctx.send("That user either does not exist or the username has not been formatted correctly. See `//help kick` for more info.")
 
 # Bans the given user.
-@client.command()
+@commands.command()
 @commands.has_permissions(ban_members=True)
 async def ban(ctx, user: Union[discord.Member, int], *, reason=""):
 	mod_channel = client.get_channel(1005514521609240808)
@@ -342,7 +343,7 @@ async def ban_error(ctx, error):
 		await ctx.send("That user either does not exist or the username has not been formatted correctly. See `//help ban` for more info.")
 
 # Unbans the given user.
-@client.command()
+@commands.command()
 @commands.has_permissions(ban_members=True)
 async def unban(ctx, *, user):
 	mod_channel = client.get_channel(1005514521609240808)
@@ -400,7 +401,7 @@ async def unban_error(ctx, error):
 		await ctx.send("That user either does not exist or has not been banned.")
 
 # Gets the stats for a Discord user
-@client.command()
+@commands.command()
 async def stats(ctx, user: Union[discord.Member, int]):
 	if isinstance(user, int):
 		user = client.get_user(user)
@@ -463,7 +464,7 @@ async def stats_error(ctx, error):
 		await ctx.send("That user either does not exist or has not been formatted correctly. See `//help stats` for more info.")
 
 # Gets info about a Geometry Dash player
-@client.command()
+@commands.command()
 async def gduser(ctx, user):
 	try:
 		accountID = int(user)
@@ -567,7 +568,7 @@ async def gduser_error(ctx, error):
 		await ctx.send("That user does not exist.")
 
 # Searches for a Geometry Dash level
-@client.command()
+@commands.command()
 async def gdsearch(ctx, level, difficulty="any"):
 	data = {
 		"secret": "Wmfd2893gb7",
@@ -718,7 +719,7 @@ async def gdsearch_error(ctx, error):
 	if isinstance(error, commands.BadArgument):
 		await ctx.send("Invalid level difficulty.")
 
-@client.command()
+@commands.command()
 async def botconfig(ctx, subcommand, *args):
 	if (subcommand == "modchannel"):
 		mod_channel = client.get_channel(int(args[0][2:-1]))
